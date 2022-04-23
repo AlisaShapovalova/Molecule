@@ -1,0 +1,35 @@
+Front end(login.js)
+const login = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await loginUser({
+        email,
+        password,
+      });
+      console.log("Login response", response);
+      if (response.data) {
+        console.log("Login response", response.data);
+        console.log("Save user in redux and local storage and then redirect");
+      }
+      router.push("/");
+    } catch (e) {
+      toast.error("Something went wrong, try again");
+    }
+  };
+
+Backend(login.js)
+export const login = async (req, res) => {
+  const { email, password } = req.body;
+
+  let user = await User.findOne({ email }).exec();
+  if (user) {
+    const validPassword = await bcrypt.compare(password, user.password);
+    if (validPassword) {
+      res.status(200).send("Successfully logged in");
+    } else {
+      res.status(401).send("Invalid password provided");
+    }
+  } else {
+    res.status(401).send("User with that email address doesn't exist");
+  }
+};
